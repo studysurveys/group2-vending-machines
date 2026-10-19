@@ -43,7 +43,7 @@
 /* ---------- SETTINGS (edit here) ----------
    FORMS: the Tally form id for each language. Leave a language as "" until its form exists:
    with only one language set, the page skips the language question and goes straight to that form. */
-var FORMS = { en: "b5BL22", ar: "" };
+var FORMS = { en: "b5BL22", ar: "" };   // set to the Arabic Tally form id (xVxqa5) once that form is published
 var LABELS = { en: "English", ar: "العربية" };
 var VERSIONS = ["A1", "A2", "B1", "B2"];   // the four conditions (Tally hidden field "version")
 var PARAM_NAME = "version";
@@ -78,7 +78,7 @@ function pickVersion(){
 }
 function go(lang){
   put(KEY_L, lang);
-  var target = "https://tally.so/r/" + FORMS[lang] + "?" + PARAM_NAME + "=" + encodeURIComponent(pickVersion());
+  var target = "https://tally.so/r/" + FORMS[lang] + "?" + PARAM_NAME + "=" + encodeURIComponent(pickVersion()) + "&lang=" + lang;
   var link = document.getElementById("link"); link.href = target;
   document.getElementById("choose").hidden = true;
   document.getElementById("loading").hidden = false;
