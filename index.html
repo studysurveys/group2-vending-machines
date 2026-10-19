@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Food Choices Survey</title>
+<style>
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+       font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:#222;text-align:center}
+  main{padding:24px;max-width:420px}
+  p{margin:.4em 0;color:#555}
+  a{color:#222}
+  .spinner{width:28px;height:28px;margin:0 auto 16px;border:3px solid #ddd;border-top-color:#222;border-radius:50%;animation:s 0.9s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<main>
+  <div class="spinner" aria-hidden="true"></div>
+  <p>Loading the survey&hellip;</p>
+  <p dir="rtl">جارٍ تحميل الاستبيان&hellip;</p>
+  <p id="fallback" hidden><a id="link" href="#">Tap here if nothing happens / اضغط هنا إذا لم يحدث شيء</a></p>
+  <noscript><p>Please enable JavaScript to open the survey.<br>يرجى تفعيل جافا سكريبت لفتح الاستبيان.</p></noscript>
+</main>
+<script>
+/* ---------- SETTINGS (edit here) ---------- */
+var TALLY_BASE = "https://tally.so/r/b5BL22";   // your Tally form
+var VERSIONS   = ["A1", "A2", "B1", "B2"];       // the four conditions
+var PARAM_NAME = "version";                      // the hidden field name in Tally
+var STORAGE_KEY = "survey_version";              // remembers the condition on this device
+/* ------------------------------------------ */
+
+function getStored(){
+  try { return localStorage.getItem(STORAGE_KEY); } catch(e){ return null; }
+}
+function setStored(v){
+  try { localStorage.setItem(STORAGE_KEY, v); } catch(e){}
+}
+function randomVersion(){
+  var n = VERSIONS.length;
+  if (window.crypto && crypto.getRandomValues) {
+    var buf = new Uint32Array(1), max = Math.floor(4294967296 / n) * n, x;
+    do { crypto.getRandomValues(buf); x = buf[0]; } while (x >= max);
+    return VERSIONS[x % n];
+  }
+  return VERSIONS[Math.floor(Math.random() * n)];
+}
+
+var params = new URLSearchParams(location.search);
+
+/* Testing: open  .../?reset=1  to clear the stored condition,
+   or  .../?force=B2  to force one condition (for checking each form). */
+if (params.get("reset")) { try { localStorage.removeItem(STORAGE_KEY); } catch(e){} }
+
+var pick = params.get("force");
+if (VERSIONS.indexOf(pick) === -1) pick = null;
+if (!pick) {
+  pick = getStored();
+  if (VERSIONS.indexOf(pick) === -1) {
+    pick = randomVersion();
+    setStored(pick);
+  }
+}
+
+var target = TALLY_BASE + "?" + PARAM_NAME + "=" + encodeURIComponent(pick);
+var link = document.getElementById("link");
+link.href = target;
+setTimeout(function(){ document.getElementById("fallback").hidden = false; }, 2500);
+location.replace(target);
+</script>
+</body>
+</html>
