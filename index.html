@@ -2,41 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
 <title>Food Choices Survey</title>
 <style>
-  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
-       font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:#222;text-align:center}
-  main{padding:24px;max-width:420px}
-  p{margin:.4em 0;color:#555}
-  a{color:#222}
-  .spinner{width:28px;height:28px;margin:0 auto 16px;border:3px solid #ddd;border-top-color:#222;border-radius:50%;animation:s 0.9s linear infinite}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+       font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Noto Sans Arabic","Geeza Pro",Tahoma,sans-serif;
+       background:#fff;color:#1b1b1f;text-align:center;-webkit-text-size-adjust:100%}
+  main{padding:24px;width:100%;max-width:420px}
+  h1{font-size:1.35rem;line-height:1.35;margin:0 0 6px}
+  p{margin:.35em 0;color:#555}
+  .langs{display:flex;flex-direction:column;gap:12px;margin-top:26px}
+  button{appearance:none;border:1.5px solid #e4e4ea;background:#fff;color:inherit;border-radius:14px;
+         padding:16px;font:inherit;font-size:1.25rem;font-weight:600;cursor:pointer;min-height:58px}
+  button:hover,button:focus-visible{border-color:#4b55e8;background:#eef0ff;outline:none}
+  .spinner{width:28px;height:28px;margin:0 auto 16px;border:3px solid #ddd;border-top-color:#222;border-radius:50%;animation:s .9s linear infinite}
   @keyframes s{to{transform:rotate(360deg)}}
+  a{color:#1b1b1f}
 </style>
 </head>
 <body>
-<main>
-  <div class="spinner" aria-hidden="true"></div>
-  <p>Loading the survey&hellip;</p>
-  <p dir="rtl">جارٍ تحميل الاستبيان&hellip;</p>
+<main id="app">
+  <div id="loading">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Loading the survey&hellip;</p>
+    <p dir="rtl">جارٍ تحميل الاستبيان&hellip;</p>
+  </div>
+  <div id="choose" hidden>
+    <h1>Food Choices Survey</h1>
+    <h1 dir="rtl">استبيان الخيارات الغذائية</h1>
+    <p>Please choose your language &nbsp;·&nbsp; <span dir="rtl">يرجى اختيار اللغة</span></p>
+    <div class="langs" id="langs"></div>
+  </div>
   <p id="fallback" hidden><a id="link" href="#">Tap here if nothing happens / اضغط هنا إذا لم يحدث شيء</a></p>
   <noscript><p>Please enable JavaScript to open the survey.<br>يرجى تفعيل جافا سكريبت لفتح الاستبيان.</p></noscript>
 </main>
 <script>
-/* ---------- SETTINGS (edit here) ---------- */
-var TALLY_BASE = "https://tally.so/r/b5BL22";   // your Tally form
-var VERSIONS   = ["A1", "A2", "B1", "B2"];       // the four conditions
-var PARAM_NAME = "version";                      // the hidden field name in Tally
-var STORAGE_KEY = "survey_version";              // remembers the condition on this device
+/* ---------- SETTINGS (edit here) ----------
+   FORMS: the Tally form id for each language. Leave a language as "" until its form exists:
+   with only one language set, the page skips the language question and goes straight to that form. */
+var FORMS = { en: "b5BL22", ar: "" };
+var LABELS = { en: "English", ar: "العربية" };
+var VERSIONS = ["A1", "A2", "B1", "B2"];   // the four conditions (Tally hidden field "version")
+var PARAM_NAME = "version";
+var KEY_V = "survey_version", KEY_L = "survey_lang";
 /* ------------------------------------------ */
 
-function getStored(){
-  try { return localStorage.getItem(STORAGE_KEY); } catch(e){ return null; }
-}
-function setStored(v){
-  try { localStorage.setItem(STORAGE_KEY, v); } catch(e){}
-}
+function get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function put(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+function drop(k){ try { localStorage.removeItem(k); } catch(e){} }
 function randomVersion(){
   var n = VERSIONS.length;
   if (window.crypto && crypto.getRandomValues) {
@@ -46,28 +62,51 @@ function randomVersion(){
   }
   return VERSIONS[Math.floor(Math.random() * n)];
 }
-
 var params = new URLSearchParams(location.search);
+/* Testing only (never give these to participants):
+   ?reset=1  forget the saved condition and language   ?force=B2  force a condition   ?lang=ar  skip the language question */
+if (params.get("reset")) { drop(KEY_V); drop(KEY_L); }
 
-/* Testing: open  .../?reset=1  to clear the stored condition,
-   or  .../?force=B2  to force one condition (for checking each form). */
-if (params.get("reset")) { try { localStorage.removeItem(STORAGE_KEY); } catch(e){} }
+var langs = Object.keys(FORMS).filter(function(l){ return FORMS[l]; });
 
-var pick = params.get("force");
-if (VERSIONS.indexOf(pick) === -1) pick = null;
-if (!pick) {
-  pick = getStored();
-  if (VERSIONS.indexOf(pick) === -1) {
-    pick = randomVersion();
-    setStored(pick);
-  }
+function pickVersion(){
+  var f = params.get("force");
+  if (VERSIONS.indexOf(f) > -1) return f;
+  var v = get(KEY_V);
+  if (VERSIONS.indexOf(v) === -1) { v = randomVersion(); put(KEY_V, v); }
+  return v;
+}
+function go(lang){
+  put(KEY_L, lang);
+  var target = "https://tally.so/r/" + FORMS[lang] + "?" + PARAM_NAME + "=" + encodeURIComponent(pickVersion());
+  var link = document.getElementById("link"); link.href = target;
+  document.getElementById("choose").hidden = true;
+  document.getElementById("loading").hidden = false;
+  setTimeout(function(){ document.getElementById("fallback").hidden = false; }, 2500);
+  location.replace(target);
 }
 
-var target = TALLY_BASE + "?" + PARAM_NAME + "=" + encodeURIComponent(pick);
-var link = document.getElementById("link");
-link.href = target;
-setTimeout(function(){ document.getElementById("fallback").hidden = false; }, 2500);
-location.replace(target);
+var want = params.get("lang");
+if (want && FORMS[want]) {
+  go(want);
+} else if (langs.length === 1) {
+  go(langs[0]);
+} else {
+  var saved = get(KEY_L);
+  if (saved && FORMS[saved] && get(KEY_V)) {
+    go(saved);          /* returning on the same device: same language and same condition */
+  } else {
+    var box = document.getElementById("langs");
+    langs.forEach(function(l){
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = LABELS[l] || l; b.lang = l;
+      b.addEventListener("click", function(){ go(l); });
+      box.appendChild(b);
+    });
+    document.getElementById("loading").hidden = true;
+    document.getElementById("choose").hidden = false;
+  }
+}
 </script>
 </body>
 </html>
