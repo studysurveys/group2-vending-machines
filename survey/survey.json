@@ -1,0 +1,148 @@
+{
+  "_help": "Edit this file to change the survey. No code changes needed. Texts have one entry per language code.",
+  "id": "vending-2x2-v1",
+  "title": { "en": "Food Choices Survey", "ar": "استبيان الخيارات الغذائية" },
+  "endpoint": "",
+  "languages": [
+    { "code": "en", "label": "English", "dir": "ltr" },
+    { "code": "ar", "label": "العربية", "dir": "rtl" }
+  ],
+  "defaultLanguage": "en",
+  "factors": { "brand": ["PICK", "TAVIO"], "label": ["NONE", "FRESH"] },
+  "stimuli": {
+    "PICK|NONE": "images/pick-none.jpg",
+    "PICK|FRESH": "images/pick-fresh.jpg",
+    "TAVIO|NONE": "images/tavio-none.jpg",
+    "TAVIO|FRESH": "images/tavio-fresh.jpg"
+  },
+  "stimulusAlt": {
+    "en": "A smart vending machine selling fresh meals",
+    "ar": "آلة بيع ذكية تبيع وجبات طازجة"
+  },
+  "pendingMinutes": 45,
+  "ui": {
+    "chooseLanguage": { "en": "Choose your language", "ar": "اختر لغتك" },
+    "start": { "en": "Start", "ar": "ابدأ" },
+    "next": { "en": "Next", "ar": "التالي" },
+    "back": { "en": "Back", "ar": "رجوع" },
+    "required": { "en": "Please choose an answer.", "ar": "يرجى اختيار إجابة." },
+    "badNumber": { "en": "Please enter a valid number.", "ar": "يرجى إدخال رقم صحيح." },
+    "saving": { "en": "Saving your answers…", "ar": "جارٍ حفظ إجاباتك…" },
+    "saveFailed": { "en": "We could not save your answers. Please check your connection and try again.", "ar": "تعذّر حفظ إجاباتك. يرجى التحقق من الاتصال والمحاولة مرة أخرى." },
+    "retry": { "en": "Try again", "ar": "حاول مرة أخرى" },
+    "tapToEnlarge": { "en": "Tap the image to enlarge", "ar": "اضغط على الصورة لتكبيرها" },
+    "close": { "en": "Close", "ar": "إغلاق" },
+    "alreadyDone": { "en": "You have already completed this survey on this device. Thank you!", "ar": "لقد أكملت هذا الاستبيان من قبل على هذا الجهاز. شكرًا لك!" },
+    "testMode": { "en": "TEST MODE: no data was saved.", "ar": "وضع الاختبار: لم يتم حفظ أي بيانات." },
+    "downloadCsv": { "en": "Download test CSV", "ar": "تنزيل ملف CSV للاختبار" }
+  },
+  "screens": [
+    {
+      "id": "intro", "type": "info", "button": "start",
+      "text": {
+        "en": "This is a short university study on food choices. It takes about 3 minutes and is anonymous. By continuing, you confirm you are 18 or older and agree to take part.",
+        "ar": "هذه دراسة جامعية قصيرة عن الخيارات الغذائية. تستغرق حوالي 3 دقائق وهي مجهولة الهوية. بالمتابعة، فإنك تؤكد أن عمرك 18 عامًا أو أكثر وتوافق على المشاركة."
+      }
+    },
+    {
+      "id": "q1", "type": "choice", "required": true,
+      "prompt": { "en": "Do you currently live in Kuwait?", "ar": "هل تقيم حاليًا في الكويت؟" },
+      "options": [
+        { "value": "yes", "label": { "en": "Yes", "ar": "نعم" } },
+        { "value": "no", "label": { "en": "No", "ar": "لا" } }
+      ],
+      "endIf": { "value": "no", "message": {
+        "en": "Thank you for your interest. This study is for people living in Kuwait.",
+        "ar": "شكرًا لاهتمامك. هذه الدراسة مخصصة للمقيمين في الكويت."
+      } },
+      "assignAfter": true
+    },
+    {
+      "id": "scenario", "type": "info", "stimulus": "large",
+      "text": {
+        "en": "Imagine you are hungry at your university, gym or workplace and see this meal in a smart vending machine.",
+        "ar": "تخيّل أنك جائع في جامعتك أو النادي الرياضي أو مكان عملك، وترى هذه الوجبة في آلة بيع ذكية."
+      }
+    },
+    { "id": "q2", "type": "scale", "stimulus": "small", "required": true,
+      "prompt": { "en": "The likelihood that I would buy this meal is high.", "ar": "احتمال شرائي لهذه الوجبة مرتفع." }, "scale": "agree" },
+    { "id": "q3", "type": "scale", "stimulus": "small", "required": true,
+      "prompt": { "en": "If I wanted a meal, I would consider buying this one.", "ar": "إذا أردت وجبة، فسأفكر في شراء هذه الوجبة." }, "scale": "agree" },
+    { "id": "q4", "type": "scale", "stimulus": "small", "required": true,
+      "prompt": { "en": "My willingness to buy this meal is high.", "ar": "رغبتي في شراء هذه الوجبة مرتفعة." }, "scale": "agree" },
+    { "id": "q5", "type": "scale", "stimulus": "small", "required": true,
+      "prompt": { "en": "I would worry that this meal might not be fresh.", "ar": "سيقلقني أن هذه الوجبة قد لا تكون طازجة." }, "scale": "agree" },
+    { "id": "q6", "type": "scale", "stimulus": "small", "required": true, "attentionCheck": 5,
+      "prompt": { "en": "Please select “5” for this statement.", "ar": "يرجى اختيار الرقم «5» لهذه العبارة." }, "scale": "agree" },
+    { "id": "q7", "type": "scale", "stimulus": "small", "required": true,
+      "prompt": { "en": "I would be concerned that this meal could make me ill.", "ar": "سيقلقني أن هذه الوجبة قد تسبب لي المرض." }, "scale": "agree" },
+    { "id": "q8", "type": "scale", "stimulus": "small", "required": true,
+      "prompt": { "en": "Buying this meal would be risky.", "ar": "شراء هذه الوجبة ينطوي على مخاطرة." }, "scale": "agree" },
+    {
+      "id": "q9", "type": "choice", "required": true,
+      "prompt": { "en": "Did the screen show a “Prepared today” label?", "ar": "هل ظهرت على الشاشة بطاقة «أُعدّت اليوم»؟" },
+      "options": [
+        { "value": "yes", "label": { "en": "Yes", "ar": "نعم" } },
+        { "value": "no", "label": { "en": "No", "ar": "لا" } },
+        { "value": "unsure", "label": { "en": "Not sure", "ar": "لست متأكدًا" } }
+      ]
+    },
+    { "id": "q10", "type": "scale", "required": true, "scale": "familiar",
+      "prompt": { "en": "How familiar are you with the brand shown?", "ar": "ما مدى معرفتك بالعلامة التجارية التي ظهرت؟" } },
+    { "id": "q11", "type": "scale", "required": true, "scale": "agree",
+      "prompt": { "en": "I consider myself very health conscious.", "ar": "أعتبر نفسي شديد الاهتمام بصحتي." } },
+    { "id": "q12", "type": "scale", "required": true, "scale": "agree",
+      "prompt": { "en": "I take health into account a lot in my life.", "ar": "آخذ الصحة بعين الاعتبار كثيرًا في حياتي." } },
+    { "id": "q13", "type": "scale", "required": true, "scale": "agree",
+      "prompt": { "en": "I take responsibility for the state of my health.", "ar": "أتحمل مسؤولية حالتي الصحية." } },
+    { "id": "q14", "type": "number", "required": true, "min": 18, "max": 99,
+      "prompt": { "en": "What is your age?", "ar": "كم عمرك؟" } },
+    { "id": "q15", "type": "choice", "required": true,
+      "prompt": { "en": "What is your gender?", "ar": "ما جنسك؟" },
+      "options": [
+        { "value": "male", "label": { "en": "Male", "ar": "ذكر" } },
+        { "value": "female", "label": { "en": "Female", "ar": "أنثى" } }
+      ] },
+    { "id": "q16", "type": "choice", "required": true,
+      "prompt": { "en": "What is your nationality?", "ar": "ما جنسيتك؟" },
+      "options": [
+        { "value": "kuwaiti", "label": { "en": "Kuwaiti", "ar": "كويتي" } },
+        { "value": "non_kuwaiti", "label": { "en": "Non-Kuwaiti", "ar": "غير كويتي" } }
+      ] },
+    { "id": "q17", "type": "choice", "required": true,
+      "prompt": { "en": "What is your occupation?", "ar": "ما هي وظيفتك؟" },
+      "options": [
+        { "value": "student", "label": { "en": "Student", "ar": "طالب" } },
+        { "value": "employed", "label": { "en": "Employed", "ar": "موظف" } },
+        { "value": "both", "label": { "en": "Both", "ar": "كلاهما" } },
+        { "value": "other", "label": { "en": "Other", "ar": "أخرى" } }
+      ] },
+    { "id": "q18", "type": "choice", "required": true,
+      "prompt": { "en": "How often do you buy from vending machines?", "ar": "كم مرة تشتري من آلات البيع؟" },
+      "options": [
+        { "value": "never", "label": { "en": "Never", "ar": "أبدًا" } },
+        { "value": "monthly_or_less", "label": { "en": "Monthly or less", "ar": "شهريًا أو أقل" } },
+        { "value": "weekly", "label": { "en": "Weekly", "ar": "أسبوعيًا" } },
+        { "value": "more", "label": { "en": "More often", "ar": "أكثر من ذلك" } }
+      ] },
+    {
+      "id": "thanks", "type": "end", "submit": true,
+      "text": {
+        "en": "Thank you for taking part! Your answers have been saved. You can now close this page.",
+        "ar": "شكرًا لمشاركتك! تم حفظ إجاباتك. يمكنك الآن إغلاق هذه الصفحة."
+      }
+    }
+  ],
+  "scales": {
+    "agree": {
+      "min": 1, "max": 7,
+      "minLabel": { "en": "Strongly disagree", "ar": "أعارض بشدة" },
+      "maxLabel": { "en": "Strongly agree", "ar": "أوافق بشدة" }
+    },
+    "familiar": {
+      "min": 1, "max": 7,
+      "minLabel": { "en": "Not at all familiar", "ar": "لا أعرفها إطلاقًا" },
+      "maxLabel": { "en": "Very familiar", "ar": "أعرفها جيدًا" }
+    }
+  }
+}
